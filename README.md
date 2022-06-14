@@ -8,6 +8,9 @@ azure functions Python runner の skelton
 - `poetry run task test` で unit test を実行する
 - `poetry run task fmt` で format を実行する 
 
+## 環境変数 の指定
+- export STORAGE_ACCOUNT_CONNECT_STR=<STORAGE_ACCOUNT_CONNECT_STR>
+
 ## deploy and run
 - `poetry export -f requirements.txt --output requirements.txt` を実行して requirements.txt を書き出す
 - VSCode から deploy する
@@ -22,3 +25,6 @@ azure functions Python runner の skelton
     - `"msg": "field required" を含むエラーが返る`
 - body を `{"param_str": "hoge", "param_int": 1}` で request する
     - 200 が返る
+
+## refs
+- [課題の追加 | Backlog Developer API | Nulab](https://developer.nulab.com/ja/docs/backlog/api/2/add-issue/#url)

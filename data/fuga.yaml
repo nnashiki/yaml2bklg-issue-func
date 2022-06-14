@@ -1,0 +1,8 @@
+project_id: <backlog.com の proiject id>
+parent_issue_summary: <親課題の件名>
+parent_issue_description: <親課題の詳細>
+parent_issue_type_id: <親課題のissueTypeId>
+child_issues:
+  -  child_issue_summary: <子課題の件名>
+     child_issue_description: <子課題の詳細>
+     child_issue_type_id: <子課題のissueTypeId>

@@ -8,7 +8,7 @@ from azfunc import main
 
 class TestFunction:
     def test_first(self):
-        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga'}
+        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga.yaml'}
         req_headers = {}
         req = func.HttpRequest(
             method="POST",
@@ -22,7 +22,7 @@ class TestFunction:
         assert resp_json["message"] == "success"
 
     def test_req_body_parse_error(self):
-        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga'}
+        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga.yaml'}
         req_headers = {}
 
         def raise_exception(*args, **kwargs):
@@ -68,7 +68,7 @@ class TestFunction:
         )
 
     def test_main_process_error(self):
-        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga'}
+        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga.yaml'}
         req_headers = {}
 
         def main_process_error(*args, **kwargs):

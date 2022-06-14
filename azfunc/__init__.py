@@ -1,8 +1,17 @@
 import json
 import logging
+import os
 
+from azure.storage.blob import BlobServiceClient, ContainerClient
 import azure.functions as func
 from pydantic import BaseModel, ValidationError
+import yaml
+from yaml2bklg.core import BacklogIssueAddReq
+
+
+class RequestBodyModel(BaseModel):
+    blob_container_name: str
+    issue_metafile_name: str
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -23,7 +32,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     # validate request body
     try:
-        RequestBodyModel(**req_body)
+        req = RequestBodyModel(**req_body)
     except ValidationError as e:
         return func.HttpResponse(
             e.json(),
@@ -31,7 +40,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="application/json",
         )
 
-    is_success_main_process, message = main_process(req_body)
+    is_success_main_process, message = main_process(req)
 
     if is_success_main_process is True:
         res_body = {"message": message}
@@ -44,10 +53,44 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse("process error", status_code=500)
 
 
-def main_process(_) -> (bool, str):
+def main_process(req: RequestBodyModel) -> (bool, str):
+    issue_metafile_path = F"./data/{req.issue_metafile_name}"
+    if not os.path.isfile(issue_metafile_path):
+        get_remote_issue_metafile(req.blob_container_name, req.issue_metafile_name)
+    with open(issue_metafile_path) as issue_metafile:
+        parsed_yaml = yaml.safe_load(issue_metafile)
+        if "project_id" not in parsed_yaml:
+            print("project_idがありません")
+        if "parent_issue_summary" not in parsed_yaml:
+            print("親課題の件名がありません")
+        if "parent_issue_description" not in parsed_yaml:
+            print("親課題の詳細がありません")
+        if "parent_issue_type_id" not in parsed_yaml:
+            print("親課題の詳細がありません")
+        project_id = parsed_yaml['project_id']
+
+        parent_req = BacklogIssueAddReq(
+            projectId=project_id,
+            summary=parsed_yaml['parent_issue_summary'],
+            description=parsed_yaml['parent_issue_description'],
+            issueTypeId=parsed_yaml['parent_issue_type_id'],
+        )
+        child_issues_req = [
+            BacklogIssueAddReq(
+                projectId=project_id,
+                summary=child_issue['child_issue_summary'],
+                description=child_issue['child_issue_description'],
+                issueTypeId=child_issue['child_issue_type_id'],
+            )
+            for child_issue in parsed_yaml["child_issues"]]
+
     return True, "success"
 
 
-class RequestBodyModel(BaseModel):
-    blob_container_name: str
-    issue_metafile_name: str
+def get_remote_issue_metafile(blob_container_name: str, issue_metafile_name: str):
+    storage_account_connect_str = os.environ.get('STORAGE_ACCOUNT_CONNECT_STR', '')
+    blob_service_client = BlobServiceClient.from_connection_string(storage_account_connect_str)
+    container_client: ContainerClient = blob_service_client.get_container_client(blob_container_name)
+    with open(F"data/{item.name}", "wb") as my_blob:
+        my_blob.write(container_client.download_blob(issue_metafile_name).readall())
+

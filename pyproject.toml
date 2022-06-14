@@ -8,6 +8,8 @@ authors = ["Niten Nashiki <niten.nashiki@lightz-inc.com>"]
 python = "^3.8"
 azure-functions = "^1.10.1"
 pydantic = "^1.9.0"
+azure-storage-blob = "^12.12.0"
+PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
