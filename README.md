@@ -5,7 +5,7 @@ azure functions Python runner の skelton
 - poetry を install する
 - `poetry shell` で仮想環境に入る
 - `poetry install` で必要なパッケージを install する
-- `poetry run task pytest` で unit test を実行する
+- `poetry run task test` で unit test を実行する
 - `poetry run task fmt` で format を実行する 
 
 ## deploy and run
