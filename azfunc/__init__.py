@@ -49,5 +49,5 @@ def main_process(_) -> (bool, str):
 
 
 class RequestBodyModel(BaseModel):
-    param_str: str
-    param_int: int
+    blob_container_name: str
+    issue_metafile_name: str

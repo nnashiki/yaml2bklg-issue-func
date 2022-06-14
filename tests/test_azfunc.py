@@ -8,7 +8,7 @@ from azfunc import main
 
 class TestFunction:
     def test_first(self):
-        req_body = {"param_str": "hoge", "param_int": 1}
+        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga'}
         req_headers = {}
         req = func.HttpRequest(
             method="POST",
@@ -22,7 +22,7 @@ class TestFunction:
         assert resp_json["message"] == "success"
 
     def test_req_body_parse_error(self):
-        req_body = {"param_str": "hoge", "param_int": 1}
+        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga'}
         req_headers = {}
 
         def raise_exception(*args, **kwargs):
@@ -53,7 +53,7 @@ class TestFunction:
         assert resp.get_body().decode() == "need any body parameters"
 
     def test_req_body_valid_error(self):
-        req_body = {"param_str": "hoge"}
+        req_body = {"blob_container_name": "hoge"}
         req_headers = {}
         req = func.HttpRequest(
             method="POST",
@@ -63,12 +63,12 @@ class TestFunction:
         )
         resp = main(req)
         assert resp.status_code == 400
-        assert "{'loc': ['param_int'], 'msg': 'field required', 'type': 'value_error.missing'}" in str(
+        assert "{'loc': ['issue_metafile_name'], 'msg': 'field required', 'type': 'value_error.missing'}" in str(
             json.loads(resp.get_body().decode())
         )
 
     def test_main_process_error(self):
-        req_body = {"param_str": "hoge", "param_int": 1}
+        req_body = {"blob_container_name": "hoge", "issue_metafile_name": 'fuga'}
         req_headers = {}
 
         def main_process_error(*args, **kwargs):
