@@ -9,3 +9,6 @@ class BacklogIssueAddReq:
     issueTypeId: int
     priorityId: int = 3
 
+
+def add_issues(parent_req: BacklogIssueAddReq, child_issues_req: list[BacklogIssueAddReq]):
+    pass
